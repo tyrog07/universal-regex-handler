@@ -29,7 +29,7 @@ jobs:
 
       - name: Check NPM_TOKEN
         run: |
-          if [ -z "$NPM_TOKEN" ]; then
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
             echo "NPM_TOKEN is not set"
             exit 1
           else
