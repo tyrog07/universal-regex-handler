@@ -1,0 +1,22 @@
+{
+  "name": "universal-regex-handler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "esbuild": "^0.24.2",
+    "esbuild-plugin-ts": "^0.1.1-rev-1.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "scripts": {
+    "build": "node build/build.js",
+    "lint": "eslint . --ext .ts",
+    "prettify": "prettier --write ."
+  }
+}
