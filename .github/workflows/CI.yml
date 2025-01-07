@@ -36,6 +36,16 @@ jobs:
             echo "NPM_TOKEN is set"
           fi
 
+      - name: Verify package name
+        run: |
+          PACKAGE_NAME=$(jq -r '.name' package.json)
+          if [ "$PACKAGE_NAME" != "universal-regex-handler" ]; then
+            echo "Package name is incorrect: $PACKAGE_NAME"
+            exit 1
+          else
+            echo "Package name is correct: $PACKAGE_NAME"
+          fi
+
       - name: Configure npm
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
