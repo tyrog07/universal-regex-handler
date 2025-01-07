@@ -1,0 +1,10 @@
+# This is a comment
+# The '*' pattern applies to all files in the repository
+*       @tyrog07
+
+# Specific files or directories
+# docs/*  @username2
+# src/*   @username3 @team2
+
+# Specific file
+# README.md @username4
