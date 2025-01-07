@@ -1,6 +1,6 @@
 // build.js
 const esbuild = require('esbuild');
-const { createOptions } = require('esbuild-plugin-ts');
+// const { createOptions } = require('esbuild-plugin-ts');
 
 esbuild
   .build({
@@ -8,6 +8,6 @@ esbuild
     bundle: true,
     outfile: 'dist/bundle.js',
     minify: true,
-    plugins: [createOptions()],
+    // plugins: [createOptions()],
   })
   .catch(() => process.exit(1));
