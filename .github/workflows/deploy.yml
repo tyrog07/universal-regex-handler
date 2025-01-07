@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: build-artifact
+        path: dist
+
+    - name: Deploy
+      run: |
+        echo "Deploying build artifacts..."
+        # Add your deployment commands here
