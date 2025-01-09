@@ -1,6 +1,6 @@
 {
   "name": "universal-regex-handler",
-  "version": "0.0.1-dev",
+  "version": "0.1.0-dev",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "license": "MIT",
