@@ -1,7 +1,7 @@
 export class JavaRegex {
-  private flags: string;
-  private pattern: string;
-  private jsPattern: RegExp;
+  flags: string;
+  pattern: string;
+  jsPattern: RegExp;
 
   constructor(pattern: string) {
     this.flags = '';
@@ -10,42 +10,61 @@ export class JavaRegex {
   }
 
   private convertPattern(pattern: string): RegExp {
-    const flagRegex = /\(\?([imuxs-]+)\)/g;
+    const flagRegex = /\(\?([imxs-]+)\)/g;
     let match;
 
-    // Extract flags from the pattern
+    const flagsToAdd = new Set<string>();
+    const flagsToRemove = new Set<string>();
+
     while ((match = flagRegex.exec(pattern)) !== null) {
-      const flagPart = match[1];
+      const flagsInMatch = match[1];
 
-      // Collect valid flags
-      if (flagPart.includes('i') && !flagPart.includes('-i')) this.flags += 'i';
-      if (flagPart.includes('m') && !flagPart.includes('-m')) this.flags += 'm';
-      if (flagPart.includes('s') && !flagPart.includes('-s')) this.flags += 's';
-
-      // Remove invalid flags
-      if (flagPart.includes('-i')) this.flags = this.flags.replace('i', '');
-      if (flagPart.includes('-m')) this.flags = this.flags.replace('m', '');
-      if (flagPart.includes('-s')) this.flags = this.flags.replace('s', '');
+      for (let i = 0; i < flagsInMatch.length; i++) {
+        const char = flagsInMatch[i];
+        if (char === '-') {
+          for (
+            let j = i + 1;
+            j < flagsInMatch.length && flagsInMatch[j] !== '-';
+            j++
+          ) {
+            flagsToRemove.add(flagsInMatch[j]);
+            flagsToAdd.delete(flagsInMatch[j]); // Remove from add set if present
+          }
+        } else if (!flagsToRemove.has(char)) {
+          flagsToAdd.add(char);
+        }
+      }
     }
 
-    // Remove all inline flag settings from the pattern
+    // Update the flags property
+    this.flags = Array.from(flagsToAdd).join('');
+
+    // Remove all flag groups from the pattern
     pattern = pattern.replace(flagRegex, '');
 
-    // Ensure no duplicate flags are present
-    this.flags = Array.from(new Set(this.flags.split(''))).join('');
+    return new RegExp(pattern, this.flags || undefined);
+  }
 
-    return new RegExp(pattern.replace(/\\/g, '\\\\'), this.flags);
+  public getPattern(): string {
+    return this.pattern;
   }
 
   public match(str: string): RegExpMatchArray | null {
-    return str.match(this.jsPattern);
+    const regexToUse = new RegExp(this.jsPattern.source, this.flags);
+    return str.match(regexToUse);
   }
 
   public replace(str: string, replacement: string): string {
-    return str.replace(this.jsPattern, replacement);
+    let flagsToUse = 'g';
+    if (this.flags) {
+      flagsToUse = this.flags + 'g';
+    }
+    const regexWithGlobal = new RegExp(this.jsPattern.source, flagsToUse);
+    return str.replace(regexWithGlobal, replacement);
   }
 
   public search(str: string): number {
-    return str.search(this.jsPattern);
+    const regexToUse = new RegExp(this.jsPattern.source, this.flags);
+    return str.search(regexToUse);
   }
 }
