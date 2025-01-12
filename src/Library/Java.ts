@@ -10,44 +10,37 @@ export class JavaRegex {
   }
 
   private convertPattern(pattern: string): RegExp {
-    this.flags = '';
     const flagRegex = /\(\?([imxs-]+)\)/g;
-    let matches: RegExpExecArray[] = [];
     let match;
 
-    while ((match = flagRegex.exec(pattern)) !== null) {
-      matches.push(match);
-    }
+    const flagsToAdd = new Set<string>();
+    const flagsToRemove = new Set<string>();
 
-    for (const match of matches) {
+    while ((match = flagRegex.exec(pattern)) !== null) {
       const flagsInMatch = match[1];
 
-      const flagsToAdd = new Set<string>();
-      const flagsToRemove = new Set<string>();
-
-      for (const char of flagsInMatch) {
-        if (char === '-') continue;
-
-        if (flagsInMatch.includes(`-${char}`)) {
-          flagsToRemove.add(char);
-        } else {
+      for (let i = 0; i < flagsInMatch.length; i++) {
+        const char = flagsInMatch[i];
+        if (char === '-') {
+          for (
+            let j = i + 1;
+            j < flagsInMatch.length && flagsInMatch[j] !== '-';
+            j++
+          ) {
+            flagsToRemove.add(flagsInMatch[j]);
+            flagsToAdd.delete(flagsInMatch[j]); // Remove from add set if present
+          }
+        } else if (!flagsToRemove.has(char)) {
           flagsToAdd.add(char);
         }
       }
-
-      // Correctly remove all occurrences using a regex replacement
-      for (const flag of flagsToRemove) {
-        this.flags = this.flags.replace(new RegExp(flag, 'g'), '');
-      }
-
-      for (const flag of flagsToAdd) {
-        if (!this.flags.includes(flag)) {
-          this.flags += flag;
-        }
-      }
     }
 
-    pattern = pattern.replace(/\(\?([imxs-]+)\)/g, '');
+    // Update the flags property
+    this.flags = Array.from(flagsToAdd).join('');
+
+    // Remove all flag groups from the pattern
+    pattern = pattern.replace(flagRegex, '');
 
     return new RegExp(pattern, this.flags || undefined);
   }
