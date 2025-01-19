@@ -43,11 +43,15 @@ class PythonRegex {
     const regex = this.compileRegex('g');
     return (function* () {
       let match;
+      let lastIndex = -1;
       while ((match = regex.exec(text)) !== null) {
-        yield match;
-        if (match[0].length === 0) {
-          regex.lastIndex++; // Avoid infinite loop for zero-length matches
+        if (regex.lastIndex === lastIndex) {
+          // Prevent infinite loop by advancing lastIndex manually for zero-length matches
+          regex.lastIndex++;
+          continue;
         }
+        lastIndex = regex.lastIndex;
+        yield match;
       }
     })();
   }
@@ -101,7 +105,7 @@ class PythonRegex {
   sub(repl: string, text: string, count: number = 0): string {
     if (this.pattern === '') {
       if (count === 0) {
-        return text.split('').join(repl);
+        return repl + text.split('').join(repl);
       } else {
         const splitText = text.split('');
         let replacedText = '';
@@ -109,13 +113,13 @@ class PythonRegex {
 
         for (let i = 0; i < splitText.length; i++) {
           if (replacedCount < count) {
-            replacedText += splitText[i] + repl;
+            replacedText += repl + splitText[i];
             replacedCount++;
           } else {
             replacedText += splitText[i];
           }
         }
-        return replacedText.slice(0, -repl.length); // Remove the trailing replacement
+        return replacedText;
       }
     }
     const regex = this.compileRegex('g');

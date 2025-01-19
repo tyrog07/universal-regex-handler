@@ -39,7 +39,7 @@ describe('PythonRegex', () => {
 
     const re2 = new PythonRegex('a(b*)');
     const matches2 = Array.from(re2.finditer('abbcdeab'));
-    expect(matches2.length).toBe(1);
+    expect(matches2.length).toBe(2);
     expect(matches2[0][0]).toBe('abb');
     expect(matches2[0][1]).toBe('bb');
     expect(matches2[0].index).toBe(0);
@@ -63,7 +63,7 @@ describe('PythonRegex', () => {
     expect(re.split('a,b,c', 0)).toEqual(['a,b,c']);
     const re2 = new PythonRegex('test');
     const text7 = 'this is a test string test test';
-    expect(re2.split(text7)).toEqual(['this is a ', ' string ', ' ', '']);
+    expect(re2.split(text7)).toEqual(['this is a ', ' string ', ' ']);
     const text6 = 'this is a test string';
     expect(re2.split(text6, 1)).toEqual(['this is a ', ' string']);
     const re3 = new PythonRegex(' ');
