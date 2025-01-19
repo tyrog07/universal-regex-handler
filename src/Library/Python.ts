@@ -1,4 +1,4 @@
-class PythonRegex {
+export class PythonRegex {
   private pattern: string;
   private flags: string;
 
@@ -137,5 +137,3 @@ class PythonRegex {
     }
   }
 }
-
-export { PythonRegex };
