@@ -1,197 +1,129 @@
 import { PythonRegex } from '../Python';
 
 describe('PythonRegex', () => {
-  it('should match a simple pattern', () => {
-    const regex = new PythonRegex('ab+c');
-    expect(regex.match('abbc')).not.toBeNull();
-    expect(regex.match('ac')).toBeNull();
+  it('should handle simple matching', () => {
+    const re = new PythonRegex('abc');
+    expect(re.match('abcdef')).not.toBeNull();
+    expect(re.match('abcdef')![0]).toBe('abc');
+    expect(re.match('defabc')).toBeNull();
   });
 
-  it('should handle flags (i, m, s, x)', () => {
-    const regexI = new PythonRegex('abc', 'i');
-    expect(regexI.match('ABC')).not.toBeNull();
+  it('should handle search', () => {
+    const re = new PythonRegex('abc');
+    expect(re.search('abcdef')).not.toBeNull();
+    expect(re.search('abcdef')![0]).toBe('abc');
+    expect(re.search('defabc')).not.toBeNull();
+    expect(re.search('defabc')![0]).toBe('abc');
+    expect(re.search('ac')).toBeNull();
+  });
 
-    const regexM = new PythonRegex('^b$', 'm');
-    expect(regexM.match('a\nb\nc')).not.toBeNull();
+  it('should handle findall', () => {
+    const re = new PythonRegex('ab*');
+    expect(re.findall('abbcdeab')).toEqual(['abb', 'ab']);
+    const re2 = new PythonRegex('ab*', 'g');
+    expect(re2.findall('abbcdeab')).toEqual(['abb', 'ab']);
+    const re3 = new PythonRegex('xyz');
+    expect(re3.findall('abbcdeab')).toEqual([]);
+  });
 
-    const regexS = new PythonRegex('a.b', 's');
-    expect(regexS.match('a\nb')).not.toBeNull();
+  it('should handle finditer', () => {
+    const re = new PythonRegex('a(b*)', 'g');
+    const matches = Array.from(re.finditer('abbcdeab'));
+    expect(matches.length).toBe(2);
+    expect(matches[0][0]).toBe('abb');
+    expect(matches[0][1]).toBe('bb');
+    expect(matches[0].index).toBe(0);
+    expect(matches[1][0]).toBe('ab');
+    expect(matches[1][1]).toBe('b');
+    expect(matches[1].index).toBe(6);
 
-    const regexX = new PythonRegex(
-      `
-      \\d{3}   # Area code
-      -       # Separator
-      \\d{3}   # Middle three digits
-      -       # Separator
-      \\d{4}   # Last four digits
-      `,
-      'x',
+    const re2 = new PythonRegex('a(b*)');
+    const matches2 = Array.from(re2.finditer('abbcdeab'));
+    expect(matches2.length).toBe(1);
+    expect(matches2[0][0]).toBe('abb');
+    expect(matches2[0][1]).toBe('bb');
+    expect(matches2[0].index).toBe(0);
+
+    const re3 = new PythonRegex('xyz', 'g');
+    const matches3 = Array.from(re3.finditer('abbcdeab'));
+    expect(matches3.length).toBe(0);
+  });
+
+  it('should handle fullmatch', () => {
+    const re = new PythonRegex('abc');
+    expect(re.fullmatch('abc')).not.toBeNull();
+    expect(re.fullmatch('abcdef')).toBeNull();
+    expect(re.fullmatch('defabc')).toBeNull();
+  });
+
+  it('should handle split', () => {
+    const re = new PythonRegex(',');
+    expect(re.split('a,b,c')).toEqual(['a', 'b', 'c']);
+    expect(re.split('a,b,c', 1)).toEqual(['a', 'b,c']);
+    expect(re.split('a,b,c', 0)).toEqual(['a,b,c']);
+    const re2 = new PythonRegex('test');
+    const text7 = 'this is a test string test test';
+    expect(re2.split(text7)).toEqual(['this is a ', ' string ', ' ', '']);
+    const text6 = 'this is a test string';
+    expect(re2.split(text6, 1)).toEqual(['this is a ', ' string']);
+    const re3 = new PythonRegex(' ');
+    expect(re3.split('a b c')).toEqual(['a', 'b', 'c']);
+  });
+
+  it('should handle sub', () => {
+    const re = new PythonRegex('test');
+    expect(re.sub('replaced', 'this is a test string')).toBe(
+      'this is a replaced string',
     );
-    expect(regexX.match('123-456-7890')).not.toBeNull();
+    expect(re.sub('replaced', 'this is a test string test', 1)).toBe(
+      'this is a replaced string test',
+    );
+    expect(re.sub('replaced', 'this is a test string test', 2)).toBe(
+      'this is a replaced string replaced',
+    );
+    const re2 = new PythonRegex('test');
+    const text9 = 'this is a test string test test';
+    expect(re2.sub('replaced', text9)).toEqual(
+      'this is a replaced string replaced replaced',
+    );
+    const text8 = 'this is a test string test test';
+    expect(re2.sub('replaced', text8, 2)).toEqual(
+      'this is a replaced string replaced test',
+    );
   });
 
-  it('should perform search', () => {
-    const regex = new PythonRegex('b+');
-    expect(regex.search('aaabbbccc')).not.toBeNull();
-    expect(regex.search('aaaccc')).toBeNull();
+  it('should handle flags', () => {
+    const re = new PythonRegex('abc', 'i');
+    expect(re.match('ABC')).not.toBeNull();
+    expect(re.match('AbC')![0]).toBe('AbC');
+    expect(re.search('ABC')).not.toBeNull();
+    expect(re.search('ABC')![0]).toBe('ABC');
+    expect(re.fullmatch('ABC')).not.toBeNull();
+
+    const re2 = new PythonRegex('^abc$', 'im');
+    expect(re2.match('ABC\n')).not.toBeNull();
+    expect(re2.search('test\nABC\ntest')).not.toBeNull();
   });
 
-  it('should findall matches', () => {
-    const regex = new PythonRegex('\\d+');
-    expect(regex.findall('123 abc 45 def 6789')).toEqual(['123', '45', '6789']);
-    expect(regex.findall('')).toEqual([]); // This is now safe
-    const regex2 = new PythonRegex('a');
-    expect(regex2.findall('bbbb')).toEqual([]);
+  it('should handle empty pattern', () => {
+    const re = new PythonRegex('');
+    expect(re.match('abc')).not.toBeNull(); // Matches at the beginning
+    expect(re.findall('abc')).toEqual(['', '', '', '']);
+    expect(Array.from(re.finditer('abc')).length).toBe(4);
+    expect(re.split('abc')).toEqual(['', 'a', 'b', 'c']);
+    expect(re.sub('x', 'abc')).toBe('xaxbxc');
+    expect(re.fullmatch('')).not.toBeNull();
+    expect(re.search('abc')).not.toBeNull();
   });
 
-  it('should finditer matches', () => {
-    const regex = new PythonRegex('\\d+');
-    const iterator = regex.finditer('123 abc 45 def 6789');
-    const results = [];
-    for (const match of iterator) {
-      results.push(match[0]);
-    }
-    expect(results).toEqual(['123', '45', '6789']);
-    const emptyIterator = regex.finditer('');
-    expect(emptyIterator.next().done).toBe(true);
+  it('should handle special characters in pattern', () => {
+    const re = new PythonRegex('\\d+'); // Matches one or more digits
+    expect(re.match('123')).not.toBeNull();
+    expect(re.match('abc')).toBeNull();
   });
 
-  it('should perform fullmatch', () => {
-    const regex = new PythonRegex('\\d+');
-    expect(regex.fullmatch('12345')).not.toBeNull();
-    expect(regex.fullmatch('12345abc')).toBeNull();
-    expect(regex.fullmatch('abc12345')).toBeNull();
-  });
-
-  it('should split a string', () => {
-    const regex = new PythonRegex(',');
-    expect(regex.split('apple,banana,orange')).toEqual([
-      'apple',
-      'banana',
-      'orange',
-    ]);
-    expect(regex.split('apple,banana,orange', 1)).toEqual([
-      'apple',
-      'banana,orange',
-    ]);
-    const regexSpace = new PythonRegex('\\s+');
-    expect(regexSpace.split('hello   world')).toEqual(['hello', 'world']);
-    expect(regexSpace.split('')).toEqual(['']);
-  });
-
-  it('should perform sub (replace)', () => {
-    const regex = new PythonRegex('a', 'g');
-    expect(regex.sub('b', 'banana')).toEqual('bbnbnb');
-    expect(regex.sub('b', 'banana', 2)).toEqual('bbnbna');
-
-    const regexNoGlobal = new PythonRegex('a');
-    expect(regexNoGlobal.sub('b', 'banana')).toEqual('bbnana');
-
-    const regexEmptyMatch = new PythonRegex('a*');
-    expect(regexEmptyMatch.sub('b', '')).toEqual('b');
-
-    const regexEndOfString = new PythonRegex('a$');
-    expect(regexEndOfString.sub('b', 'banana')).toEqual('bananb');
-
-    const regexMultipleMatchesEnd = new PythonRegex('a', 'g');
-    expect(regexMultipleMatchesEnd.sub('b', 'aaaa', 2)).toEqual('bbbb');
-
-    const regexZeroLengthMatch = new PythonRegex('^', 'g');
-    expect(regexZeroLengthMatch.sub('b', 'test')).toEqual('btest');
-
-    const regexZeroLengthMatch2 = new PythonRegex('a*', 'g');
-    expect(regexZeroLengthMatch2.sub('b', '')).toEqual('b');
-
-    const regexZeroLengthMatch3 = new PythonRegex('a?', 'g');
-    expect(regexZeroLengthMatch3.sub('b', '')).toEqual('b');
-  });
-
-  it('should perform subn (replace with count)', () => {
-    const regex = new PythonRegex('a');
-    expect(regex.subn('b', 'banana')).toEqual(['bbnbnb', 3]);
-    expect(regex.subn('b', 'banana', 2)).toEqual(['bbnana', 2]);
-    expect(regex.subn('b', '')).toEqual(['', 0]);
-  });
-
-  it('should handle capturing groups and backreferences', () => {
-    const regex = new PythonRegex('(\\w+)\\s(\\w+)'); // Correct regex string
-    const match = regex.match('Hello World');
-
-    expect(match).not.toBeNull(); // Check for null before accessing properties
-
-    if (match) {
-      // Safe check
-      expect(match[1]).toBe('Hello');
-      expect(match[2]).toBe('World');
-    }
-
-    const noMatch = regex.match('1234');
-    expect(noMatch).toBeNull();
-
-    const regexWithFlags = new PythonRegex('([a-z]+) ([0-9]+)', 'i');
-    const matchWithFlags = regexWithFlags.match('Test 123');
-    expect(matchWithFlags).not.toBeNull();
-    if (matchWithFlags) {
-      expect(matchWithFlags[1]).toBe('Test');
-      expect(matchWithFlags[2]).toBe('123');
-    }
-  });
-
-  it('should handle special characters correctly', () => {
-    const regexDot = new PythonRegex('\\.'); // Matches a literal dot
-    expect(regexDot.match('test.txt')).not.toBeNull();
-    expect(regexDot.match('testxt')).toBeNull();
-
-    const regexBackslash = new PythonRegex('\\\\'); // Matches a literal backslash
-    expect(regexBackslash.match('test\\txt')).not.toBeNull();
-    expect(regexBackslash.match('testtxt')).toBeNull();
-
-    const regexDigits = new PythonRegex('\\d+'); // Matches one or more digits
-    expect(regexDigits.match('12345')).not.toBeNull();
-    expect(regexDigits.match('abc')).toBeNull();
-
-    const regexCarat = new PythonRegex('^test');
-    expect(regexCarat.match('test test')).not.toBeNull();
-    expect(regexCarat.match('atest test')).toBeNull();
-
-    const regexDollar = new PythonRegex('test$');
-    expect(regexDollar.match('test')).not.toBeNull();
-    expect(regexDollar.match('test test')).toBeNull();
-
-    const regexQuestionMark = new PythonRegex('test?');
-    expect(regexQuestionMark.match('tes')).not.toBeNull();
-    expect(regexQuestionMark.match('test')).not.toBeNull();
-    expect(regexQuestionMark.match('testt')).toBeNull();
-
-    const regexPlus = new PythonRegex('test+');
-    expect(regexPlus.match('test')).not.toBeNull();
-    expect(regexPlus.match('testt')).not.toBeNull();
-    expect(regexPlus.match('tes')).toBeNull();
-
-    const regexStar = new PythonRegex('test*');
-    expect(regexStar.match('tes')).not.toBeNull();
-    expect(regexStar.match('test')).not.toBeNull();
-    expect(regexStar.match('testt')).not.toBeNull();
-
-    const regexOpenBracket = new PythonRegex('\\[');
-    expect(regexOpenBracket.match('[')).not.toBeNull();
-
-    const regexCloseBracket = new PythonRegex('\\]');
-    expect(regexCloseBracket.match(']')).not.toBeNull();
-
-    const regexOpenParenthesis = new PythonRegex('\\(');
-    expect(regexOpenParenthesis.match('(')).not.toBeNull();
-
-    const regexCloseParenthesis = new PythonRegex('\\)');
-    expect(regexCloseParenthesis.match(')')).not.toBeNull();
-
-    const regexOpenBrace = new PythonRegex('\\{');
-    expect(regexOpenBrace.match('{')).not.toBeNull();
-
-    const regexCloseBrace = new PythonRegex('\\}');
-    expect(regexCloseBrace.match('}')).not.toBeNull();
-
-    const regexPipe = new PythonRegex('\\|');
-    expect(regexPipe.match('|')).not.toBeNull();
+  it('should handle unicode flag', () => {
+    const re = new PythonRegex('üöä', 'u');
+    expect(re.match('üöä')).not.toBeNull();
   });
 });

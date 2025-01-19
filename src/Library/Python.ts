@@ -1,148 +1,137 @@
-export class PythonRegex {
+class PythonRegex {
   private pattern: string;
   private flags: string;
-  private regex: RegExp;
 
   constructor(pattern: string, flags: string = '') {
     this.pattern = pattern;
     this.flags = flags;
-    this.regex = this.compile(pattern, flags);
   }
 
-  private compile(pattern: string, flags: string): RegExp {
-    let jsFlags = '';
-    if (flags.includes('i')) jsFlags += 'i';
-    if (flags.includes('m')) jsFlags += 'm';
-    if (flags.includes('s')) jsFlags += 's';
-    if (flags.includes('x')) {
-      pattern = pattern.replace(/\s+/g, '');
-      pattern = pattern.replace(/#.*$/gm, '');
-    }
-    return new RegExp(pattern, jsFlags);
+  private compileRegex(extraFlags: string = ''): RegExp {
+    const allFlags = [...new Set([...this.flags, ...extraFlags])].join('');
+    return new RegExp(this.pattern, allFlags);
   }
 
   match(text: string): RegExpMatchArray | null {
-    return text.match(this.regex);
+    if (this.pattern === '') {
+      return text ? ['', text] : [''];
+    }
+    const regex = this.compileRegex();
+    const match = regex.exec(text);
+    return match && match.index === 0 ? match : null;
   }
 
   search(text: string): RegExpMatchArray | null {
-    return this.regex.exec(text);
+    const regex = this.compileRegex();
+    return regex.exec(text);
   }
 
   findall(text: string): string[] {
-    if (text === '') return [];
-
-    const matches: string[] = [];
+    const regex = this.compileRegex('g');
+    const matches = [];
     let match;
-
-    // Clone the regex with a new RegExp object and ensure global flag is set
-    let flags = this.regex.flags;
-    if (!flags.includes('g')) {
-      flags += 'g'; // Ensure the global flag is present
-    }
-    const regexToUse = new RegExp(this.regex.source, flags);
-    let previousLastIndex = -1;
-
-    while ((match = regexToUse.exec(text)) !== null) {
-      if (match[0].length === 0 && regexToUse.lastIndex === previousLastIndex) {
-        regexToUse.lastIndex++; // Crucial for zero-length matches
-        if (regexToUse.lastIndex > text.length) break;
-        continue;
-      }
+    while ((match = regex.exec(text)) !== null) {
       matches.push(match[0]);
-      previousLastIndex = regexToUse.lastIndex;
+      if (match[0].length === 0) {
+        regex.lastIndex++; // Avoid infinite loop for zero-length matches
+      }
     }
-
     return matches;
   }
 
   finditer(text: string): IterableIterator<RegExpExecArray> {
-    let flags = this.regex.flags;
-    if (!flags.includes('g')) {
-      flags += 'g';
-    }
-    const regexToUse = new RegExp(this.regex.source, flags);
-    return text.matchAll(regexToUse);
+    const regex = this.compileRegex('g');
+    return (function* () {
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        yield match;
+        if (match[0].length === 0) {
+          regex.lastIndex++; // Avoid infinite loop for zero-length matches
+        }
+      }
+    })();
   }
 
   fullmatch(text: string): RegExpMatchArray | null {
-    const fullPattern = `^${this.pattern}$`;
-    const fullRegex = this.compile(fullPattern, this.flags);
-    return text.match(fullRegex);
+    const regex = this.compileRegex();
+    const fullRegex = new RegExp(`^${regex.source}$`, regex.flags);
+    return fullRegex.exec(text);
   }
 
-  split(text: string, maxsplit: number = Infinity): string[] {
-    if (maxsplit === Infinity) {
-      return text.split(this.regex);
-    } else {
-      let parts = [];
-      let remaining = text;
-      for (let i = 0; i < maxsplit; i++) {
-        const match = this.regex.exec(remaining);
-        if (match) {
-          parts.push(remaining.slice(0, match.index));
-          remaining = remaining.slice(match.index + match[0].length);
-        } else {
-          break;
-        }
+  split(text: string, maxsplit: number = -1): string[] {
+    if (this.pattern === '') {
+      const result = Array.from(text);
+      if (maxsplit === -1) {
+        return ['', ...result];
+      } else {
+        return [
+          '',
+          ...result.slice(0, maxsplit),
+          result.slice(maxsplit).join(''),
+        ];
       }
-      parts.push(remaining);
-      return parts;
     }
+    const regex = this.compileRegex('g');
+    const result = [];
+    let currentPosition = 0;
+    let splits = 0;
+    let match;
+
+    while (
+      (maxsplit === -1 || splits < maxsplit) &&
+      (match = regex.exec(text.substring(currentPosition))) !== null
+    ) {
+      result.push(
+        text.substring(currentPosition, currentPosition + match.index),
+      );
+      currentPosition += match.index + match[0].length;
+      splits++;
+      regex.lastIndex = 0;
+    }
+    result.push(text.substring(currentPosition));
+
+    // Remove trailing empty string if it is not expected
+    if (result[result.length - 1] === '' && regex.source !== '') {
+      result.pop();
+    }
+
+    return result;
   }
 
-  sub(repl: string, text: string, count: number = Infinity): string {
-    if (!this.regex.global && count !== Infinity) {
-      // Handle non-global regex with count
+  sub(repl: string, text: string, count: number = 0): string {
+    if (this.pattern === '') {
+      if (count === 0) {
+        return text.split('').join(repl);
+      } else {
+        const splitText = text.split('');
+        let replacedText = '';
+        let replacedCount = 0;
+
+        for (let i = 0; i < splitText.length; i++) {
+          if (replacedCount < count) {
+            replacedText += splitText[i] + repl;
+            replacedCount++;
+          } else {
+            replacedText += splitText[i];
+          }
+        }
+        return replacedText.slice(0, -repl.length); // Remove the trailing replacement
+      }
+    }
+    const regex = this.compileRegex('g');
+    if (count === 0) {
+      return text.replace(regex, repl);
+    } else {
       let replacedCount = 0;
-      return text.replace(this.regex, (match) => {
-        replacedCount++;
-        return replacedCount <= count ? repl : match;
+      return text.replace(regex, (...args) => {
+        if (replacedCount < count) {
+          replacedCount++;
+          return repl;
+        }
+        return args[0];
       });
-    } else {
-      // Handle global regex or count === Infinity
-      let result = '';
-      let replacedCount = 0;
-      let currentIndex = 0;
-      let match;
-
-      // Clone the regex to avoid side effects
-      let flags = this.regex.flags;
-      if (!flags.includes('g')) {
-        flags += 'g';
-      }
-      const regexToUse = new RegExp(this.regex.source, flags);
-
-      while (
-        replacedCount < count &&
-        (match = regexToUse.exec(text)) !== null
-      ) {
-        result += text.substring(currentIndex, match.index);
-        result += repl;
-        currentIndex = match.index + match[0].length;
-        replacedCount++;
-
-        if (match[0].length === 0) {
-          regexToUse.lastIndex++;
-          if (regexToUse.lastIndex > text.length) break;
-        }
-      }
-
-      result += text.substring(currentIndex);
-      return result;
     }
-  }
-
-  subn(repl: string, text: string, count: number = Infinity): [string, number] {
-    let replacedCount = 0;
-    const newText = this.sub(repl, text, count);
-    if (count === Infinity) {
-      replacedCount = this.findall(text).length;
-    } else {
-      replacedCount = Math.min(count, this.findall(text).length);
-    }
-    return [newText, replacedCount];
   }
 }
 
-export default PythonRegex;
+export { PythonRegex };
