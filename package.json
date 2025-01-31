@@ -8,6 +8,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
     "esbuild": "^0.24.2",
@@ -15,17 +16,25 @@
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.4.2",
+    "ts-jest": "^29.2.5",
     "typescript": "^5.7.2",
-    "zlib": "^1.0.5",
-    "@types/jest": "^29.5.14",
-    "ts-jest": "^29.2.5"
+    "zlib": "^1.0.5"
   },
   "scripts": {
     "build": "node build/build.js",
     "lint": "eslint . --ext .ts",
     "prettify": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky init"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
