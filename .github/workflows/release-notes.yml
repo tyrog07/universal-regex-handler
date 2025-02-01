@@ -26,23 +26,20 @@ jobs:
       - name: Generate Release Notes
         id: generate_release_notes
         uses: release-drafter/release-drafter@v5
-        with:
-          config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-name: release-drafter.yml
 
-      - name: Read Generated Release Notes
-        id: read_release_notes
-        run: |
-          RELEASE_NOTES=$(cat .github/release-drafter/release-notes.md)
-          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+      - name: Save Release Notes to File
+        id: save_release_notes
+        run: echo "${{ steps.generate_release_notes.outputs.changelog }}" > RELEASE_NOTES.md
 
       - name: Publish Release Notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          RELEASE_NOTES: ${{ env.RELEASE_NOTES }}
         run: |
+          RELEASE_NOTES=$(cat RELEASE_NOTES.md)
           curl -XPOST -H "Authorization: token $GITHUB_TOKEN" \
-          -d "{\"tag_name\":\"${PACKAGE_VERSION}\",\"name\":\"Release ${PACKAGE_VERSION}\",\"body\":\"${RELEASE_NOTES}\",\"draft\":false,\"prerelease\":false}" \
+          -d "{\"tag_name\":\"${{ env.PACKAGE_VERSION }}\",\"name\":\"Release ${{ env.PACKAGE_VERSION }}\",\"body\":\"${RELEASE_NOTES}\",\"draft\":false,\"prerelease\":false}" \
           https://api.github.com/repos/${{ github.repository }}/releases
