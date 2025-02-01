@@ -1,0 +1,32 @@
+name: Release notes
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
+
+jobs:
+  generate-release-notes:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read package.json version
+        id: read_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Generate Release Notes using GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          curl -XPOST -H "Authorization: token $GITHUB_TOKEN" \
+          -d "{\"tag_name\":\"${PACKAGE_VERSION}\",\"name\":\"Release ${PACKAGE_VERSION}\",\"generate_release_notes\":true,\"draft\":false,\"prerelease\":false}" \
+          https://api.github.com/repos/${{ github.repository }}/releases
+        shell: bash
