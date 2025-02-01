@@ -1,7 +1,15 @@
 # universal-regex-handler (beta)
 
+<div align="center">
+
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/tyrog07/universal-regex-handler/blob/HEAD/LICENSE)
+[![npm latest package](https://img.shields.io/npm/v/universal-regex-handler/latest.svg)](https://www.npmjs.com/package/universal-regex-handler)
+[![npm downloads](https://img.shields.io/npm/dm/universal-regex-handler.svg)](https://www.npmjs.com/package/universal-regex-handler)
 [![Checks](https://github.com/tyrog07/universal-regex-handler/actions/workflows/test.yml/badge.svg)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/test.yml)
-[![Build](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml/badge.svg)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml) [![CI](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml)
+[![Build](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml/badge.svg)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml)
+[![CI](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml)
+
+</div>
 
 ## Table of Contents
 
