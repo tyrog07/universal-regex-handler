@@ -29,7 +29,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          config-name: .github/release-drafter.yml
+          config-name: release-drafter.yml
 
       - name: Save Release Notes to File
         id: save_release_notes
