@@ -1,6 +1,7 @@
 {
   "name": "universal-regex-handler",
-  "version": "0.3.0-dev",
+  "description": "A JavaScript/TypeScript package providing wrapper classes around regular expression functionality",
+  "version": "0.3.1-dev",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "license": "MIT",
