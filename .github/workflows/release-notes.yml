@@ -29,11 +29,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          config-name: release-drafter.yml
+          config-name: .github/release-drafter.yml
 
       - name: Save Release Notes to File
         id: save_release_notes
-        run: echo "${{ steps.generate_release_notes.outputs.changelog }}" > RELEASE_NOTES.md
+        run: |
+          echo "${{ steps.generate_release_notes.outputs.changelog }}" > RELEASE_NOTES.md
+        shell: bash
 
       - name: Publish Release Notes
         env:
@@ -43,3 +45,4 @@ jobs:
           curl -XPOST -H "Authorization: token $GITHUB_TOKEN" \
           -d "{\"tag_name\":\"${{ env.PACKAGE_VERSION }}\",\"name\":\"Release ${{ env.PACKAGE_VERSION }}\",\"body\":\"${RELEASE_NOTES}\",\"draft\":false,\"prerelease\":false}" \
           https://api.github.com/repos/${{ github.repository }}/releases
+        shell: bash
