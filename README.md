@@ -8,6 +8,9 @@
 [![Checks](https://github.com/tyrog07/universal-regex-handler/actions/workflows/test.yml/badge.svg)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/test.yml)
 [![Build](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml/badge.svg)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/build.yml)
 [![CI](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tyrog07/universal-regex-handler/actions/workflows/CI.yml)
+[![install size](https://img.shields.io/badge/dynamic/json?url=https://packagephobia.com/v2/api.json?p=universal-regex-handler&query=$.install.pretty&label=install%20size&style=flat-square)](https://packagephobia.now.sh/result?p=universal-regex-handler)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/universal-regex-handler?style=flat-square)](https://bundlephobia.com/package/universal-regex-handler@latest)
+[![Known Vulnerabilities](https://snyk.io/test/npm/universal-regex-handler/badge.svg)](https://snyk.io/test/npm/universal-regex-handler)
 
 </div>
 
@@ -128,4 +131,4 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://github.com/tyrog07/universal-regex-handler/blob/HEAD/LICENSE).
