@@ -1,6 +1,10 @@
 const esbuild = require('esbuild');
 const { readFileSync, writeFileSync } = require('fs');
 const { brotliCompressSync } = require('zlib');
+const { execSync } = require('child_process');
+
+// Generate Type Definitions using TypeScript compiler
+execSync('tsc --declaration --emitDeclarationOnly --outDir dist/types');
 
 // Build configuration
 esbuild
