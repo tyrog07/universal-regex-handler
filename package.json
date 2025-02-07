@@ -1,9 +1,10 @@
 {
   "name": "universal-regex-handler",
   "description": "A JavaScript/TypeScript package providing wrapper classes around regular expression functionality",
-  "version": "0.3.3-dev",
+  "version": "0.3.4-dev",
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "types": "dist/types/index.d.ts",
   "license": "MIT",
   "files": [
     "dist"
