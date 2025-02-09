@@ -19,8 +19,9 @@
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Usage](#usage)
-4. [Contributing](#contributing)
-5. [License](#license)
+4. [API](#api)
+5. [Contributing](#contributing)
+6. [License](#license)
 
 ## Introduction
 
@@ -41,7 +42,7 @@ yarn add universal-regex-handler
 ## Usage
 
 ```bash
-import { GoRegex, JavaRegex, PythonRegex } from 'regex-wrapper';
+import { GoRegex, JavaRegex, PythonRegex, RustRegex } from 'regex-wrapper';
 
 # GoRegex Example (mimicking Go's regexp package)
 const goRegex = new GoRegex(`\\b\\w+\\b`, 'i'); // Raw string and case-insensitive
@@ -55,12 +56,17 @@ const javaText = "Hello World! hello world!";
 const javaMatch = javaRegex.match(javaText);
 console.log("Java Match:", javaMatch); // Output: ['Hello', index: 0, input: 'Hello World! hello world!', groups: undefined]
 
-
 # PythonRegex Example (mimicking Python's re module)
 const pythonRegex = new PythonRegex(r"\b\w+\b", 'i'); // Raw string and case-insensitive
 const pythonText = "Hello World! hello world!";
 const pythonMatches = pythonRegex.findall(pythonText);
 console.log("Python Matches:", pythonMatches); // Output: [ 'Hello', 'World', 'hello', 'world' ]
+
+# RustRegex Example (mimicking Rust's regex crate)
+const rustRegex = new RustRegex('\\d+', 'i'); // Case-insensitive
+const rustText = "123 abc 456";
+const rustMatches = rustRegex.findIter(rustText);
+console.log("Rust Matches:", rustMatches); // Output: [ '123', '456' ]
 
 // and many more methods are available...
 ```
@@ -105,6 +111,29 @@ Mimics Python's re module.
 - `fullmatch(text: string): RegExpMatchArray | null`: Matches the entire string.
 - `split(text: string, maxsplit: number = -1): string[]`: Splits the string.
 - `sub(repl: string, text: string, count: number = 0): string`: Replaces occurrences of the pattern.
+
+### `PythonRegex`
+
+Mimics Python's re module.
+
+- `constructor(pattern: string, flags: string = '')`: Creates a new RustRegex instance.
+- `isMatch(text: string): boolean`: Tests if the pattern matches the string.
+- `find(text: string): string | null`: Finds the first match of the pattern in the string.
+- `findIter(text: string): string[]`: Finds all matches of the pattern in the string.
+- `captures(text: string): (string | undefined)[] | null`: Captures groups from the first match of the pattern in the string.
+- `namedCaptures(text: string): { [name: string]: string | undefined } | null`: Captures named groups from the first match of the pattern in the string.
+- `caseInsensitive(enabled: boolean = true): RustRegex`: Enables or disables case-insensitive matching.
+- `setUnicode(enabled: boolean): RustRegex`: Sets the Unicode flag.
+- `replace(text: string, replacement: string | ((match: string, ...captures: string[]) => string)): string`: Replaces occurrences of the pattern in the string with the replacement string or function.
+- `replaceOne(text: string, replacement: string | ((match: string, ...captures: string[]) => string)): string`: Replaces the first occurrence of the pattern in the string with the replacement string or function.
+- `split(text: string, limit?: number): string[]`: Splits the string into an array of substrings using the pattern as the delimiter.
+- `static escape(text: string): string`: Escapes a string to be used literally in a regex pattern.
+- `pattern(): string`: Returns the original regex pattern string.
+- `flags(): string`: Returns the flags used in the regex pattern.
+- `isMatchFull(text: string): boolean`: Tests if the regex matches the entire string.
+- `findStartEnd(text: string): [number, number] | null`: Finds the starting and ending indices of the first match.
+- `findStartEndIter(text: string): [number, number][]`: Finds the starting and ending indices of all matches.
+- `capturesIter(text: string): (string[] | undefined)[]`: Iterates over all captures in the string.
 
 ### Flags
 
