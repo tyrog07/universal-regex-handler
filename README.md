@@ -25,7 +25,7 @@
 
 ## Introduction
 
-A JavaScript/TypeScript package providing wrapper classes around regular expression functionality, mimicking the behavior of regex engines in other languages like Go, Java, and Python. This package offers classes (`GoRegex`, `JavaRegex`, `PythonRegex`, `RustRegex`) that handle raw strings, inline flags, Unicode, and provide methods for matching, searching, replacing, splitting, and more.
+A JavaScript/TypeScript package providing wrapper classes around regular expression functionality, mimicking the behavior of regex engines in other languages like Go, Java, Python, and Rust. This package offers classes (`GoRegex`, `JavaRegex`, `PythonRegex`, `RustRegex`) that handle raw strings, inline flags, Unicode, and provide methods for matching, searching, replacing, splitting, and more.
 
 ## Installation
 
