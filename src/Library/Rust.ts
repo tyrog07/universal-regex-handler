@@ -84,33 +84,17 @@ export class RustRegex {
   namedCaptures(text: string): { [name: string]: string | undefined } | null {
     const match = this.regex.exec(text);
 
-    if (!match || !this.regex.source.includes('?<')) {
-      return null; // No named groups or no match
+    // CRITICAL: Check for a full match FIRST!
+    if (!match || match[0].length !== text.length) {
+      return null;
     }
 
-    const names: string[] = [];
-    const namedRegex = new RegExp(this.regex.source, this.regex.flags); // Recreate regex to get group names
-    let groupIndex = 1;
-    let match2;
-
-    while ((match2 = namedRegex.exec(namedRegex.source)) !== null) {
-      if (match2[0].startsWith('(?<')) {
-        // Check for named capture syntax
-        const nameMatch = /\(\?<([a-zA-Z_][a-zA-Z0-9_]*)>/.exec(match2[0]);
-        if (nameMatch) {
-          names.push(nameMatch[1]);
-        }
-      }
-      groupIndex++;
+    // THEN check for groups:
+    if (!match.groups) {
+      return null;
     }
 
-    const result: { [name: string]: string | undefined } = {};
-    if (match) {
-      for (let i = 0; i < names.length; i++) {
-        result[names[i]] = match[i + 1];
-      }
-    }
-    return result;
+    return match.groups;
   }
 
   /**
