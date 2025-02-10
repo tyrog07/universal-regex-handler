@@ -112,9 +112,9 @@ Mimics Python's re module.
 - `split(text: string, maxsplit: number = -1): string[]`: Splits the string.
 - `sub(repl: string, text: string, count: number = 0): string`: Replaces occurrences of the pattern.
 
-### `PythonRegex`
+### `RustRegex`
 
-Mimics Python's re module.
+Mimics Rust's regex crate.
 
 - `constructor(pattern: string, flags: string = '')`: Creates a new RustRegex instance.
 - `isMatch(text: string): boolean`: Tests if the pattern matches the string.
