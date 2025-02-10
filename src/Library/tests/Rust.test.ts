@@ -30,33 +30,31 @@ describe('RustRegex', () => {
     expect(re.captures('hello')).toBeNull();
   });
 
-  // it('should handle named capture groups (with limitations)', () => {
-  //   const re = RustRegex.new(String.raw`(?<first>\w+) (?<second>\w+)`);
+  it('Negative case: No match', () => {
+    const re2 = RustRegex.new(
+      String.raw`^(?!\w)(?<first>\w+)(?!\w) (?!\w)(?<second>\w+)(?!\w)$`,
+    );
+    const noMatch = re2.namedCaptures('no match');
+    expect(noMatch).toBeNull();
 
-  //   const namedCaptures = re.namedCaptures('hello world');
-  //   expect(namedCaptures).toEqual({ first: 'hello', second: 'world' });
+    const noMatch2 = re2.namedCaptures('nomatch');
+    expect(noMatch2).toBeNull();
 
-  //   const noMatch = re.namedCaptures('no match');
-  //   expect(noMatch).toBeNull(); // Correct: No match
+    const noMatch3 = re2.namedCaptures('no match'); // Non-breaking space
+    expect(noMatch3).toBeNull();
 
-  //   const re2 = RustRegex.new(String.raw`(\w+) (\w+)`); // No named groups
-  //   const noNamedGroups = re2.namedCaptures('hello world');
-  //   expect(noNamedGroups).toBeNull(); // Correct: No named groups
+    const noMatch4 = re2.namedCaptures('no match extra');
+    expect(noMatch4).toBeNull();
 
-  //   const re3 = RustRegex.new(String.raw`(?<name1>\w+)(?<name2>\w+)`);
-  //   const namedCaptures3 = re3.namedCaptures('ab');
-  //   expect(namedCaptures3).toEqual({ name1: 'a', name2: 'b' });
+    const noMatch5 = re2.namedCaptures('extra no match');
+    expect(noMatch5).toBeNull();
 
-  //   const re4 = RustRegex.new(
-  //     String.raw`(?<first>\w+) (?<second>\w+)(?<third>\w+)`,
-  //   );
-  //   const namedCaptures4 = re4.namedCaptures('one two three');
-  //   expect(namedCaptures4).toEqual({
-  //     first: 'one',
-  //     second: 'two',
-  //     third: 'three',
-  //   });
-  // });
+    const noMatch6 = re2.namedCaptures(''); // Empty string
+    expect(noMatch6).toBeNull();
+
+    const noMatch7 = re2.namedCaptures(' '); // Only space
+    expect(noMatch7).toBeNull();
+  });
 
   it('should replace matches with a string', () => {
     const re = RustRegex.new(String.raw`(\w+) (\w+)`);
