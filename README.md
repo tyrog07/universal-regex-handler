@@ -25,7 +25,7 @@
 
 ## Introduction
 
-A JavaScript/TypeScript package providing wrapper classes around regular expression functionality, mimicking the behavior of regex engines in other languages like Go, Java, Python, and Rust. This package offers classes (`GoRegex`, `JavaRegex`, `PythonRegex`, `RustRegex`) that handle raw strings, inline flags, Unicode, and provide methods for matching, searching, replacing, splitting, and more.
+A JavaScript/TypeScript package providing wrapper classes around regular expression functionality, mimicking the behavior of regex engines in other languages like Go, Java, Python, and Rust. This package offers classes (`GoRegex`, `JavaRegex`, `PythonRegex`, `RustRegex`, `CSharpRegex`) that handle raw strings, inline flags, Unicode, and provide methods for matching, searching, replacing, splitting, and more.
 
 ## Installation
 
@@ -42,7 +42,7 @@ yarn add universal-regex-handler
 ## Usage
 
 ```bash
-import { GoRegex, JavaRegex, PythonRegex, RustRegex } from 'regex-wrapper';
+import { GoRegex, JavaRegex, PythonRegex, RustRegex, CSharpRegex } from 'regex-wrapper';
 
 # GoRegex Example (mimicking Go's regexp package)
 const goRegex = new GoRegex(`\\b\\w+\\b`, 'i'); // Raw string and case-insensitive
@@ -67,6 +67,13 @@ const rustRegex = new RustRegex('\\d+', 'i'); // Case-insensitive
 const rustText = "123 abc 456";
 const rustMatches = rustRegex.findIter(rustText);
 console.log("Rust Matches:", rustMatches); // Output: [ '123', '456' ]
+
+# CSharpRegex Example (mimicking C#'s Regex class)
+const csharpRegex = new CSharpRegex('hello', 'IgnoreCase'); // Case-insensitive
+const csharpText = "Hello World! hello world!";
+const csharpMatches = csharpRegex.Matches(csharpText);
+console.log("CSharp Matches:", csharpMatches.map(match => match.value)); // Output: [ 'Hello', 'hello' ]
+
 
 // and many more methods are available...
 ```
@@ -134,6 +141,24 @@ Mimics Rust's regex crate.
 - `findStartEnd(text: string): [number, number] | null`: Finds the starting and ending indices of the first match.
 - `findStartEndIter(text: string): [number, number][]`: Finds the starting and ending indices of all matches.
 - `capturesIter(text: string): (string[] | undefined)[]`: Iterates over all captures in the string.
+
+### `CSharpRegex`
+
+Mimics C#'s Regex class.
+
+- `constructor(pattern: string, options: string = '')`: Creates a new CSharpRegex instance.
+- `IsMatch(input: string): boolean`: Tests if the pattern matches the input string.
+- `Match(input: string): CSharpMatch | null`: Finds the first match of the pattern in the input string.
+- `Matches(input: string): CSharpMatch[]`: Finds all matches of the pattern in the input string.
+- `Replace(input: string, replacement: string): string`: Replaces occurrences of the pattern in the input string with the replacement string.
+- `Split(input: string, count?: number, startat?: number): string[]`: Splits the input string into an array of substrings using the pattern as the delimiter.
+- `static IsMatch(input: string, pattern: string, options: string = ''): boolean`: Tests if the pattern matches the input string.
+- `static Match(input: string, pattern: string, options: string = ''): CSharpMatch | null`: Finds the first match of the pattern in the input string.
+- `static Matches(input: string, pattern: string, options: string = ''): CSharpMatch[]`: Finds all matches of the pattern in the input string.
+- `static Replace(input: string, pattern: string, replacement: string, options: string = ''): string`: Replaces occurrences of the pattern in the input string with the replacement string.
+- `static Split(input: string, pattern: string, count?: number, startat?: number, options: string = ''): string[]`: Splits the input string into an array of substrings using the pattern as the delimiter.
+- `static Escape(input: string): string`: Escapes a string to be used literally in a regex pattern.
+- `static Unescape(input: string): string`: Unescapes a string that was escaped for use in a regex pattern.
 
 ### Flags
 
