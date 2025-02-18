@@ -1,7 +1,7 @@
 {
   "name": "universal-regex-handler",
   "description": "A JavaScript/TypeScript package providing wrapper classes around regular expression functionality",
-  "version": "0.5.1-dev",
+  "version": "0.5.2-dev",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -32,7 +32,7 @@
     "lint": "eslint . --ext .ts",
     "prettify": "prettier --write .",
     "test": "jest",
-    "prepare": "husky init"
+    "prepare": "husky"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
