@@ -1,7 +1,7 @@
 {
   "name": "universal-regex-handler",
   "description": "A JavaScript/TypeScript package providing wrapper classes around regular expression functionality",
-  "version": "0.5.2-dev",
+  "version": "0.5.3-dev",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -39,5 +39,27 @@
       "eslint --fix",
       "prettier --write"
     ]
-  }
+  },
+  "keywords": [
+    "regex",
+    "regular expression",
+    "regex wrapper",
+    "regex handler",
+    "JavaScript regex",
+    "TypeScript regex",
+    "Go regex",
+    "Java regex",
+    "Python regex",
+    "Rust regex",
+    "CSharp regex",
+    "regex library",
+    "regex utility",
+    "regex engine",
+    "regex toolkit",
+    "regex patterns",
+    "regex matching",
+    "regex replacement",
+    "regex splitting",
+    "regex search"
+  ]
 }
