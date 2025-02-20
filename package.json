@@ -1,7 +1,9 @@
 {
   "name": "universal-regex-handler",
   "description": "A JavaScript/TypeScript package providing wrapper classes around regular expression functionality",
-  "version": "0.5.3-dev",
+  "version": "0.5.4-dev",
+  "homepage": "https://github.com/tyrog07/universal-regex-handler",
+  "repository": "tyrog07/universal-regex-handler",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
